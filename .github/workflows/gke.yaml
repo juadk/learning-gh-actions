@@ -11,6 +11,7 @@ env:
   FLAKE_ATTEMPTS: 1
   GKE_ZONE: europe-west1
   GKE_VERSION: 1.21.4-gke.2300
+  UNIQ: $NUM
 
 jobs:
   acceptance-scenario2:
@@ -41,6 +42,7 @@ jobs:
         run: |
           id=$RANDOM
           echo '::set-output name=ID::'$id
+          echo NUM=${{ env.NUM }}
           #          gcloud container clusters create epinioci$id \
           #--cluster-version ${{ env.GKE_VERSION }} \
           #--disk-size 100 \
@@ -57,7 +59,9 @@ jobs:
           #kubectl get pods -A
 
       - name: Delete GKE cluster
+        shell: bash
         run: |
           id="${{ steps.create-cluster.outputs.ID }}"
           echo $id
+          echo NUM=${{ env.NUM }}
           #gcloud container clusters delete epinioci$id --zone ${{ env.GKE_ZONE }} --quiet
