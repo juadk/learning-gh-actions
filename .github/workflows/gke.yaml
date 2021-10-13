@@ -57,7 +57,6 @@ jobs:
           kubectl get pods -A
 
       - name: Delete GKE cluster
-        shell: bash
         run: |
           id="${{ steps.create-cluster.outputs.ID }}"
           gcloud container clusters delete epinioci$id --zone ${{ env.GKE_ZONE }} --quiet
