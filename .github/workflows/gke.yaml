@@ -3,6 +3,7 @@ name: GKE-CI
 on:
   schedule:
     - cron:  '0 5 * * *'
+  workflow_dispatch:
 
 env:
   SETUP_GO_VERSION: '^1.13.7'
