@@ -10,6 +10,7 @@ env:
   GINKGO_NODES: 1
   FLAKE_ATTEMPTS: 1
   GKE_ZONE: europe-west1
+  GKE_VERSION: 1.21.4-gke.2300
 
 jobs:
   acceptance-scenario2:
@@ -33,3 +34,30 @@ jobs:
         with:
           service_account_key: ${{ secrets.EPCI_GKE_SA_KEY }}
           project_id: ${{ secrets.EPCI_GKE_PROJECT }}
+
+      - name: Create GKE cluster
+        id: create_cluster
+        shell: bash
+        run: |
+          id=$RANDOM
+          echo '::set-output name=ID::'$id
+          gcloud container clusters create epinioCI$id \
+          --cluster-version ${{ env.GKE_VERSION }} \
+          --disk-size 100 \
+          --num-nodes=1 \
+          --machine-type n1-standard-2 \
+          --no-enable-cloud-logging \
+          --no-enable-cloud-monitoring  \
+          --zone europe-west1
+
+      - name: Get Kubernetes info
+        shell: bash
+        run: |
+          kubectl get nodes
+          kubectl get pods -A
+
+      - name: Delete GKE cluster
+        shell: bash
+        run: |
+          id="${{ steps.create-cluster.outputs.ID }}"
+          gcloud container clusters delete epinioCI$id --zone ${{ env.GKE_VERSION }}
