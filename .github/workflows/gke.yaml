@@ -41,22 +41,23 @@ jobs:
         run: |
           id=$RANDOM
           echo '::set-output name=ID::'$id
-          gcloud container clusters create epinioci$id \
-          --cluster-version ${{ env.GKE_VERSION }} \
-          --disk-size 100 \
-          --num-nodes=1 \
-          --machine-type n1-standard-2 \
-          --no-enable-cloud-logging \
-          --no-enable-cloud-monitoring  \
-          --zone europe-west1
+          #          gcloud container clusters create epinioci$id \
+          #--cluster-version ${{ env.GKE_VERSION }} \
+          #--disk-size 100 \
+          #--num-nodes=1 \
+          #--machine-type n1-standard-2 \
+          #--no-enable-cloud-logging \
+          #--no-enable-cloud-monitoring  \
+          #--zone europe-west1
 
-      - name: Get Kubernetes info
-        shell: bash
-        run: |
-          kubectl get nodes
-          kubectl get pods -A
+          #      - name: Get Kubernetes info
+          #shell: bash
+          #run: |
+          #kubectl get nodes
+          #kubectl get pods -A
 
       - name: Delete GKE cluster
         run: |
           id="${{ steps.create-cluster.outputs.ID }}"
-          gcloud container clusters delete epinioci$id --zone ${{ env.GKE_ZONE }} --quiet
+          echo $id
+          #gcloud container clusters delete epinioci$id --zone ${{ env.GKE_ZONE }} --quiet
