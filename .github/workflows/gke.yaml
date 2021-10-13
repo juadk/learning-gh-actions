@@ -11,7 +11,6 @@ env:
   FLAKE_ATTEMPTS: 1
   GKE_ZONE: europe-west1
   GKE_VERSION: 1.21.4-gke.2300
-  UNIQ: $RANDOM
 
 jobs:
   acceptance-scenario2:
@@ -37,10 +36,10 @@ jobs:
           project_id: ${{ secrets.EPCI_GKE_PROJECT }}
 
       - name: Create GKE cluster
-        id: create_cluster
-        shell: bash
+        id: create-cluster
         run: |
-          echo NUM=${{ env.UNIQ }}
+          id=$RANDOM
+          echo '::set-output name=ID::'$id
           #          gcloud container clusters create epinioci$id \
           #--cluster-version ${{ env.GKE_VERSION }} \
           #--disk-size 100 \
@@ -57,8 +56,7 @@ jobs:
           #kubectl get pods -A
 
       - name: Delete GKE cluster
-        shell: bash
         run: |
-          echo $id
-          echo NUM=${{ env.UNIQ }}
+          id="${{ steps.create-cluster.outputs.ID }}"
+          echo "ID = $id"
           #gcloud container clusters delete epinioci$id --zone ${{ env.GKE_ZONE }} --quiet
