@@ -40,8 +40,6 @@ jobs:
         id: create_cluster
         shell: bash
         run: |
-          id=$RANDOM
-          echo '::set-output name=ID::'$id
           echo NUM=${{ env.UNIQ }}
           #          gcloud container clusters create epinioci$id \
           #--cluster-version ${{ env.GKE_VERSION }} \
@@ -61,7 +59,6 @@ jobs:
       - name: Delete GKE cluster
         shell: bash
         run: |
-          id="${{ steps.create-cluster.outputs.ID }}"
           echo $id
           echo NUM=${{ env.UNIQ }}
           #gcloud container clusters delete epinioci$id --zone ${{ env.GKE_ZONE }} --quiet
