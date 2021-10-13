@@ -60,4 +60,4 @@ jobs:
         shell: bash
         run: |
           id="${{ steps.create-cluster.outputs.ID }}"
-          gcloud container clusters delete epinioci$id --zone ${{ env.GKE_VERSION }} --quiet
+          gcloud container clusters delete epinioci$id --zone ${{ env.GKE_ZONE }} --quiet
