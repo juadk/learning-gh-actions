@@ -1,7 +1,7 @@
 package namespace
 
 import (
-	"net/http"
+	"context"
 
 	"github.com/epinio/epinio/helpers/kubernetes"
 	"github.com/epinio/epinio/internal/api/v1/response"
@@ -10,18 +10,16 @@ import (
 	"github.com/epinio/epinio/internal/services"
 	apierror "github.com/epinio/epinio/pkg/api/core/v1/errors"
 	"github.com/epinio/epinio/pkg/api/core/v1/models"
-)
 
-// Controller represents all functionality of the API related to namespaces
-type Controller struct {
-}
+	"github.com/gin-gonic/gin"
+)
 
 // Index handles the API endpoint /namespaces (GET)
 // It returns a list of all Epinio-controlled namespaces
 // An Epinio namespace is nothing but a kubernetes namespace which has a
 // special Label (Look at the code to see which).
-func (oc Controller) Index(w http.ResponseWriter, r *http.Request) apierror.APIErrors {
-	ctx := r.Context()
+func (oc Controller) Index(c *gin.Context) apierror.APIErrors {
+	ctx := c.Request.Context()
 	cluster, err := kubernetes.GetCluster(ctx)
 	if err != nil {
 		return apierror.InternalError(err)
@@ -34,24 +32,14 @@ func (oc Controller) Index(w http.ResponseWriter, r *http.Request) apierror.APIE
 
 	namespaces := make(models.NamespaceList, 0, len(orgList))
 	for _, org := range orgList {
-		// Retrieve app references for namespace, and reduce to their names.
-		appRefs, err := application.ListAppRefs(ctx, cluster, org.Name)
+		appNames, err := namespaceApps(ctx, cluster, org.Name)
 		if err != nil {
-			return apierror.InternalError(err)
-		}
-		appNames := make([]string, 0, len(appRefs))
-		for _, app := range appRefs {
-			appNames = append(appNames, app.Name)
+			return err
 		}
 
-		// Retrieve services for namespace, and reduce to their names.
-		services, err := services.List(ctx, cluster, org.Name)
+		serviceNames, err := namespaceServices(ctx, cluster, org.Name)
 		if err != nil {
-			return apierror.InternalError(err)
-		}
-		serviceNames := make([]string, 0, len(services))
-		for _, service := range services {
-			serviceNames = append(serviceNames, service.Name())
+			return err
 		}
 
 		namespaces = append(namespaces, models.Namespace{
@@ -61,10 +49,34 @@ func (oc Controller) Index(w http.ResponseWriter, r *http.Request) apierror.APIE
 		})
 	}
 
-	err = response.JSON(w, namespaces)
+	response.OKReturn(c, namespaces)
+	return nil
+}
+
+func namespaceApps(ctx context.Context, cluster *kubernetes.Cluster, org string) ([]string, apierror.APIErrors) {
+	// Retrieve app references for namespace, and reduce to their names.
+	appRefs, err := application.ListAppRefs(ctx, cluster, org)
 	if err != nil {
-		return apierror.InternalError(err)
+		return nil, apierror.InternalError(err)
+	}
+	appNames := make([]string, 0, len(appRefs))
+	for _, app := range appRefs {
+		appNames = append(appNames, app.Name)
 	}
 
-	return nil
+	return appNames, nil
+}
+
+func namespaceServices(ctx context.Context, cluster *kubernetes.Cluster, org string) ([]string, apierror.APIErrors) {
+	// Retrieve services for namespace, and reduce to their names.
+	services, err := services.List(ctx, cluster, org)
+	if err != nil {
+		return nil, apierror.InternalError(err)
+	}
+	serviceNames := make([]string, 0, len(services))
+	for _, service := range services {
+		serviceNames = append(serviceNames, service.Name())
+	}
+
+	return serviceNames, nil
 }

@@ -8,12 +8,14 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	"gopkg.in/yaml.v2"
 
+	"github.com/epinio/epinio/helpers/bytes"
 	"github.com/epinio/epinio/helpers/kubernetes/tailer"
 	api "github.com/epinio/epinio/internal/api/v1"
 	"github.com/epinio/epinio/internal/cli/logprinter"
@@ -197,11 +199,20 @@ func (c *EpinioClient) AppShow(appName string) error {
 
 	msg := c.ui.Success().WithTable("Key", "Value")
 
+	var createdAt time.Time
 	if app.Workload != nil {
+		createdAt, err = time.Parse(time.RFC3339, app.Workload.CreatedAt)
+		if err != nil {
+			return err
+		}
 		msg = msg.WithTableRow("Status", app.Workload.Status).
 			WithTableRow("Username", app.Workload.Username).
 			WithTableRow("StageId", app.Workload.StageID).
-			WithTableRow("Routes", app.Workload.Route)
+			WithTableRow("Routes", app.Workload.Route).
+			WithTableRow("Age", time.Since(createdAt).Round(time.Second).String()).
+			WithTableRow("Restarts", strconv.Itoa(int(app.Workload.Restarts))).
+			WithTableRow("milliCPUs", strconv.Itoa(int(app.Workload.MilliCPUs))).
+			WithTableRow("Memory", bytes.ByteCountIEC(app.Workload.MemoryBytes))
 	} else {
 		msg = msg.WithTableRow("Status", "not deployed")
 	}
@@ -371,7 +382,7 @@ func (c *EpinioClient) AppLogs(appName, stageID string, follow bool, interrupt c
 		endpoint = api.Routes.Path("StagingLogs", c.Config.Org, stageID)
 	}
 	webSocketConn, resp, err := websocket.DefaultDialer.Dial(
-		fmt.Sprintf("%s/%s?%s", c.API.WsURL, endpoint, strings.Join(urlArgs, "&")), headers)
+		fmt.Sprintf("%s%s/%s?%s", c.API.WsURL, api.Root, endpoint, strings.Join(urlArgs, "&")), headers)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to connect to websockets endpoint. Response was = %+v\nThe error is", resp))
 	}
