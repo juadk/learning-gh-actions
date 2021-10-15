@@ -1,0 +1,40 @@
+name: sample-action
+
+on:
+  pull_request:
+  schedule:
+    - cron:  '0 5 * * *'
+  workflow_dispatch:
+    inputs:
+      keep_cluster:
+        description: "Keep the cluster afterwards? (empty/yes)"
+        required: false
+        default: ""
+
+env:
+  SETUP_GO_VERSION: '^1.13.7'
+  GINKGO_NODES: 1
+  FLAKE_ATTEMPTS: 1
+  GKE_ZONE: 'europe-west1'
+  GKE_VERSION: '1.21.4-gke.2300'
+  GKE_MACHINE_TYPE: 'n1-standard-2'
+
+jobs:
+  acceptance-scenario2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get All Git Tags
+        run: git fetch --force --prune --unshallow --tags
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.SETUP_GO_VERSION }}
+
+      - name: Check Go version
+        shell: bash
+        run: |
+          go version
