@@ -37,4 +37,25 @@ jobs:
       - name: Check Go version
         shell: bash
         run: |
+          go versionsa
+
+  acceptance-scenario3:
+    if: ${{ always() }}
+    needs: [acceptance-scenario2]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get All Git Tags
+        run: git fetch --force --prune --unshallow --tags
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.SETUP_GO_VERSION }}
+
+      - name: Check Go version
+        shell: bash
+        run: |
           go version
