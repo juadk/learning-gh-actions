@@ -4,13 +4,19 @@ on:
   schedule:
     - cron:  '0 5 * * *'
   workflow_dispatch:
+    inputs:
+      keep_cluster:
+        description: "Keep the cluster afterwards? (empty/yes)"
+        required: false
+        default: ""
 
 env:
   SETUP_GO_VERSION: '^1.13.7'
   GINKGO_NODES: 1
   FLAKE_ATTEMPTS: 1
-  GKE_ZONE: europe-west1
-  GKE_VERSION: 1.21.4-gke.2300
+  GKE_ZONE: 'europe-west1'
+  GKE_VERSION: '1.21.4-gke.2300'
+  GKE_MACHINE_TYPE: 'n1-standard-2'
 
 jobs:
   acceptance-scenario2:
@@ -26,6 +32,16 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ env.SETUP_GO_VERSION }}
+
+      # The system domain is managed by route53, we need credentials to update
+      # it to the loadbalancer's IP
+      - name: Configure AWS credentials for Route53
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
       - name: Setup Ginkgo Test Framework
         run: go install github.com/onsi/ginkgo/ginkgo@v1.16.2
 
@@ -44,18 +60,26 @@ jobs:
           --cluster-version ${{ env.GKE_VERSION }} \
           --disk-size 100 \
           --num-nodes=1 \
-          --machine-type n1-standard-2 \
+          --machine-type ${{ env.GKE_MACHINE_TYPE }} \
           --no-enable-cloud-logging \
           --no-enable-cloud-monitoring  \
-          --zone europe-west1
+          --zone ${{ env.GKE_ZONE }}
 
-      - name: Get Kubernetes info
-        shell: bash
+      - name: Installation Acceptance Tests
+        env:
+          REGEX: Scenario2
+          REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          AWS_ZONE_ID: ${{ secrets.AWS_ZONE_ID }}
+          GKE_DOMAIN: ${{ secrets.AWS_DOMAIN }}
+          EPINIO_TIMEOUT_MULTIPLIER: 3
         run: |
-          kubectl get nodes
-          kubectl get pods -A
+          make test-acceptance-install
 
       - name: Delete GKE cluster
+        if: ${{ always() && !github.event.inputs.keep_cluster }}
+        shell: bash
         run: |
+          echo "debug keep_cluster: ${{ github.event.inputs.keep_cluster }}"
           id="${{ steps.create-cluster.outputs.ID }}"
           gcloud container clusters delete epinioci$id --zone ${{ env.GKE_ZONE }} --quiet

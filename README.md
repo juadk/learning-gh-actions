@@ -3,9 +3,10 @@
 Opinionated platform that runs on Kubernetes, that takes you from App to URL in one step.
 
 [![godoc](https://pkg.go.dev/badge/epinio/epinio)](https://pkg.go.dev/github.com/epinio/epinio/internal/api/v1)
-[![CI](https://github.com/epinio/epinio/workflows/CI/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/main.yml?query=event%3Aschedule)
-[![AKS-CI](https://github.com/epinio/epinio/actions/workflows/aks.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/aks.yml)
-[![EKS-CI](https://github.com/epinio/epinio/actions/workflows/eks.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/eks.yml)
+[![CI](https://github.com/epinio/epinio/workflows/k3d-ci-scenario1.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/k3d-ci-scenario1.yml?query=event%3Aschedule)
+[![AKS-CI](https://github.com/epinio/epinio/actions/workflows/aks-ci-scenario3.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/aks-ci-scenario3.yml)
+[![EKS-CI](https://github.com/epinio/epinio/actions/workflows/eks-ci-scenario4.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/eks-ci-scenario4.yml)
+[![GKE-CI](https://github.com/epinio/epinio/actions/workflows/gke-ci-scenario2.yml/badge.svg)](https://github.com/epinio/epinio/actions/workflows/gke-ci-scenario2.yml)
 [![golangci-lint](https://github.com/epinio/epinio/actions/workflows/golangci-lint.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/golangci-lint.yml)
 
 <img src="./docs/epinio.png" align="right" width="200" height="50%">
@@ -46,7 +47,7 @@ to use Kubernetes as a PaaS (Platform as a Service).
 
 Installation and user documentation is available at our main [docs.epinio.io](https://docs.epinio.io/) site.
 
-Find Epinio developer documentation here in [docs](./docs).
+Our [developer documentation](./docs) explains how to build and run Epinio from a source checkout.
 
 ## Features
 
