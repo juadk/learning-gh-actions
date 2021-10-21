@@ -4,7 +4,7 @@ Opinionated platform that runs on Kubernetes, that takes you from App to URL in 
 
 [![godoc](https://pkg.go.dev/badge/epinio/epinio)](https://pkg.go.dev/github.com/epinio/epinio/internal/api/v1)
 [![CI](https://github.com/epinio/epinio/workflows/k3d-ci-scenario1.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/k3d-ci-scenario1.yml?query=event%3Aschedule)
-[![AKS-CI](https://github.com/epinio/epinio/actions/workflows/aks-ci-scenario3.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/aks-ci-scenario3.yml)
+[![AKS-CI](https://github.com/juadk/learning-gh-actions/actions/workflows/aks-ci-scenario.yml/badge.svg?event=schedule)](https://github.com/juadk/learning-gh-actions/actions/workflows/aks-ci-scenario3.yml)
 [![EKS-CI](https://github.com/epinio/epinio/actions/workflows/eks-ci-scenario4.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/eks-ci-scenario4.yml)
 [![GKE-CI](https://github.com/epinio/epinio/actions/workflows/gke-ci-scenario2.yml/badge.svg)](https://github.com/epinio/epinio/actions/workflows/gke-ci-scenario2.yml)
 [![golangci-lint](https://github.com/epinio/epinio/actions/workflows/golangci-lint.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/golangci-lint.yml)
