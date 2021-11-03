@@ -19,7 +19,7 @@ jobs:
         id: last-tag
         run: |
           tag=$(git tag | head -1)
-          echo '::set-output tag_version=TAG::'$tag
+          echo '::set-output name=TAG::'$tag
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
