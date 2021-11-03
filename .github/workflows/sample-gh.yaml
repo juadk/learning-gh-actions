@@ -20,6 +20,9 @@ jobs:
         run: |
           tag=$(git tag | head -1)
           echo '::set-output name=TAG::'$tag
+      - name: Print the tag
+        run: |
+          echo ${{ steps.last-tag.outputs.TAG }}
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
