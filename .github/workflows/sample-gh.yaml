@@ -20,10 +20,13 @@ jobs:
         run: |
           tag=$(git tag | tail -1)
           echo '::set-output name=TAG::'$tag
+          echo $tag
       - name: Print the tag
         run: |
           echo ${{ steps.last-tag.outputs.TAG }}
+          toto="${{ steps.last-tag.outputs.TAG }}"
           echo ${{ github.event.client_payload.ref }}
+          echo $toto
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
