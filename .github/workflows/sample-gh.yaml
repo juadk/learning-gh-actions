@@ -18,11 +18,12 @@ jobs:
       - name: Get the last tag
         id: last-tag
         run: |
-          tag=$(git tag | head -1)
+          tag=$(git tag | tail -1)
           echo '::set-output name=TAG::'$tag
       - name: Print the tag
         run: |
           echo ${{ steps.last-tag.outputs.TAG }}
+          echo ${{ github.event.client_payload.ref }}
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
