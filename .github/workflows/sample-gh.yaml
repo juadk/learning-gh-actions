@@ -18,6 +18,7 @@ jobs:
       - name: Get the last tag
         id: last-tag
         run: |
+          git tag | tail -1
           tag=$(git tag | tail -1)
           echo '::set-output name=TAG::'$tag
           echo $tag
