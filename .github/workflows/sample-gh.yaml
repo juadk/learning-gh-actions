@@ -1,9 +1,6 @@
 name: sample-action
 
 on:
-  pull_request:
-  schedule:
-    - cron:  '0 5 * * *'
   workflow_dispatch:
     inputs:
       keep_cluster:
@@ -11,30 +8,17 @@ on:
         required: false
         default: ""
 
-env:
-  SETUP_GO_VERSION: '^1.13.7'
-  GINKGO_NODES: 1
-  FLAKE_ATTEMPTS: 1
-  GKE_ZONE: 'europe-west1'
-  GKE_VERSION: '1.21.4-gke.2300'
-  GKE_MACHINE_TYPE: 'n1-standard-2'
-
 jobs:
-  acceptance-scenario2:
+  release:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Get All Git Tags
-        run: git fetch --force --prune --unshallow --tags
-
-      - name: Setup Go
-        uses: actions/setup-go@v2
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
         with:
-          go-version: ${{ env.SETUP_GO_VERSION }}
-
-      - name: Check Go version
-        shell: bash
-        run: |
-          go version
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: juadk/epinio-helm-chart
+          event-type: epinio-release
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
