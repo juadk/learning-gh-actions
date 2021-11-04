@@ -20,6 +20,7 @@ jobs:
         run: |
           pwd
           which git
+          /usr/bin/git tag
           /usr/bin/git tag | tail -1
           tag=$(/usr/bin/git tag | tail -1)
           echo '::set-output name=TAG::'$tag
