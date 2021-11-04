@@ -19,8 +19,8 @@ jobs:
         id: last-tag
         run: |
           pwd
-          git tag | tail -1
-          tag=$(git tag | tail -1)
+          /usr/bin/git tag | tail -1
+          tag=$(/usr/bin/git tag | tail -1)
           echo '::set-output name=TAG::'$tag
           echo $tag
       - name: Print the tag
