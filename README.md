@@ -1,112 +1,27 @@
-# Epinio
+# epinio-end-to-end-tests
+This repository contains all the files necessary to run Epinio end-to-end tests.
 
-Opinionated platform that runs on Kubernetes, that takes you from App to URL in one step.
+In the cypress directory are stored the tests written using the [Cypress](https://www.cypress.io/) testing framework. 
 
-[![godoc](https://pkg.go.dev/badge/epinio/epinio)](https://pkg.go.dev/github.com/epinio/epinio/internal/api/v1)
-[![CI](https://github.com/epinio/epinio/workflows/k3d-ci-scenario1.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/k3d-ci-scenario1.yml?query=event%3Aschedule)
-[![AKS-CI](https://github.com/juadk/learning-gh-actions/actions/workflows/aks-ci-scenario.yml/badge.svg?event=schedule)](https://github.com/juadk/learning-gh-actions/actions/workflows/aks-ci-scenario3.yml)
-[![EKS-CI](https://github.com/epinio/epinio/actions/workflows/eks-ci-scenario4.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/eks-ci-scenario4.yml)
-[![GKE-CI](https://github.com/epinio/epinio/actions/workflows/gke-ci-scenario2.yml/badge.svg)](https://github.com/epinio/epinio/actions/workflows/gke-ci-scenario2.yml)
-[![golangci-lint](https://github.com/epinio/epinio/actions/workflows/golangci-lint.yml/badge.svg?event=schedule)](https://github.com/epinio/epinio/actions/workflows/golangci-lint.yml)
+## Running the tests
 
-<img src="./docs/epinio.png" align="right" width="200" height="50%">
+It's expected that you have a Rancher instance installed and accessible by default.
 
-## Contents
+Some environment variables must be set before running the test, mainly to target your Rancher instance:
 
-- [Epinio](#epinio)
-  - [Contents](#contents)
-  - [What problem does Epinio solve](#what-problem-does-epinio-solve)
-  - [Documentation](#documentation)
-  - [Features](#features)
-  - [Usage](#usage)
-  - [Buildpacks](#buildpacks)
-  - [Reach Us](#reach-us)
-  - [Contributing](#contributing)
-  - [License](#license)
+|  Variable name | Description | Default |
+|--|--|--|
+| `RANCHER_USER`  | Rancher dashboard user | X |
+| `RANCHER_PASSWORD`  | Rancher dashboard password | X |
+| `RANCHER_URL`  | Rancher dashboard URL | `http://localhost:8005` |
+| `CLUSTER_NAME`  | Cluster where you want Epinio installed | `local` |
+| `SYSTEM_DOMAIN`  | Domain name for Epinio | X |
+| `CACHE_SESSION`  | Enable/Disable cache session | `false` |
 
-## What problem does Epinio solve
 
-Epinio makes it easy for developers to deploy their applications to Kubernetes. Easy means:
+`make e2e-tests`
 
-- No previous experience with Kubernetes is required
-- No steep learning curve
-- Quick local setup with zero configuration
-- Deploying to production similar to development
-
-Kubernetes is becoming the de-facto standard for container orchestration.
-Developers may want to use Kubernetes for all the benefits it provides or may
-have to do so because that's what their Ops team has chosen. Whatever the case,
-using Kubernetes is not simple. It has a steep learning curve and doing it right
-is a full time job. Developers should spend their time working on their applications,
-not doing operations.
-
-Epinio is adding the needed abstractions and intelligence to allow Developers
-to use Kubernetes as a PaaS (Platform as a Service).
-
-## Documentation
-
-Installation and user documentation is available at our main [docs.epinio.io](https://docs.epinio.io/) site.
-
-Our [developer documentation](./docs) explains how to build and run Epinio from a source checkout.
-
-## Features
-
-- **Security**
-  - mTLS: Epinio uses `linkerd` to secure all communication between epinio components inside the kubernetes cluster
-  - Basic Authentication to access the API.
-- **Epinio Clients**
-  - Web UI
-  - Epinio CLI
-- **Apps**
-  - CRUD operations of your app. (An app can be a tarball or in a github repo)
-  - Cloud Native Buildpacks provide the runtime environment for your apps
-- **Services**
-  - CRUD operations of your service. A service can be a database, SaaS etc. A service can be an external component or can be created using `epinio service`
-  - Bind services to apps.
-
-## Usage
-
-- [QuickStart](https://docs.epinio.io/tutorials/quickstart.html) - Tutorial on how to create a namespace and push an application.
-
-## Buildpacks
-
-Buildpacks convert your application source code into container images in which the buildpack provides the framework, dependencies and runtime support for your app based on it's programming language.
-
-Epinio uses [Paketo Buildpacks](https://paketo.io/docs/) through tekton pipelines to convert your source code into container images. 
-
-[Tekton Buildpack Pipeline](https://github.com/tektoncd/catalog/blob/main/task/buildpacks/0.3/buildpacks.yaml) - Epinio uses this tekton pipeline with the Paketo's full [Builder Image](https://paketo.io/docs/concepts/builders/).
-
-[Using Custom Buildpack](./docs/developer/howtos/custom-python-builder.md) - Steps to create and use a custom builder image that includes a buildpack for Python (The paketo  full [Builder Image](https://paketo.io/docs/concepts/builders/) doesn't support python apps yet).
-
-### Example apps
-
-- Rails: https://github.com/epinio/example-rails
-- Java: https://github.com/spring-projects/spring-petclinic/
-- Paketo Buildpack example apps: https://github.com/paketo-buildpacks/samples
-
-## Reach Us
-
-- Slack: #epinio on [Rancher Users](https://rancher-users.slack.com/)
-- Github: [Discuss](https://github.com/epinio/epinio/discussions/new)
-
-## Contributing
-
-`Epinio` uses [Github Project](https://github.com/epinio/epinio/projects/1) for tracking issues. You can also find the issues currently being worked on in the `BackLog` section.
-
-Find more information in the [Contribution Guide](./CONTRIBUTING.md).
-
-## License
-
-Copyright (c) 2020-2021 [SUSE, LLC](http://suse.com)
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+That's also possible to run Cypress in GUI mode (mandatory for developing new tests).</br>
+As prerequisites, you need nodejs, yarn and a graphical environment.</br>
+You can find more instructions about dependencies on the official [Cypress documentation](https://docs.cypress.io/guides/getting-started/installing-cypress).</br>
+Once requirements meet, run `make cypress-gui`.

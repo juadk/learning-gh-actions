@@ -1,0 +1,27 @@
+{
+  "experimentalSessionSupport": true,
+  "defaultCommandTimeout": 10000,
+  "clientCertificates": [
+    {
+      "url": "https://*",
+      "ca": [],
+      "certs": [
+        {
+          "cert": "cypress/fixtures/epinio-private-cert-pem.file",
+          "key": "cypress/fixtures/epinio-private-key-pem.file"
+        }
+      ]
+    }
+  ],
+  "testFiles": [
+    "unit_tests/first_connexion.spec.ts",
+    "unit_tests/installation.spec.ts",
+    "unit_tests/menu.spec.ts",
+    "unit_tests/applications.spec.ts",
+    "unit_tests/services.spec.ts",
+    "unit_tests/namespaces.spec.ts",
+    "unit_tests/uninstall.spec.ts",
+    "scenarios/install_with_default_options.spec.ts",
+    "scenarios/install_with_s3_and_external_registry.spec.ts"
+  ]
+}
