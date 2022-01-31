@@ -1,0 +1,17 @@
+# This workflow calls the master UI workflow with custom variables
+name: Scenario 1 Cypress chrome
+
+on:
+  workflow_dispatch:
+  
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  call-master-UI-workflow:
+    uses: ./.github/workflows/master_ui_workflow.yml
+    with:
+      browser: chrome
+      cypress_image: cypress/browsers:node16.13.0-chrome95-ff94
+      cypress_test: install_with_default_options.spec.ts
+      runner: ui-e2e-1

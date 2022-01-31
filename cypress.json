@@ -1,6 +1,7 @@
 {
   "experimentalSessionSupport": true,
   "defaultCommandTimeout": 10000,
+  "projectId": "r7up82",
   "clientCertificates": [
     {
       "url": "https://*",
