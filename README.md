@@ -1,27 +1,41 @@
-# epinio-end-to-end-tests
-This repository contains all the files necessary to run Epinio end-to-end tests.
+# Website
 
-In the cypress directory are stored the tests written using the [Cypress](https://www.cypress.io/) testing framework. 
+This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
 
-## Running the tests
+### Installation
 
-It's expected that you have a Rancher instance installed and accessible by default.
+```
+$ yarn
+```
 
-Some environment variables must be set before running the test, mainly to target your Rancher instance:
+### Local Development
 
-|  Variable name | Description | Default |
-|--|--|--|
-| `RANCHER_USER`  | Rancher dashboard user | X |
-| `RANCHER_PASSWORD`  | Rancher dashboard password | X |
-| `RANCHER_URL`  | Rancher dashboard URL | `http://localhost:8005` |
-| `CLUSTER_NAME`  | Cluster where you want Epinio installed | `local` |
-| `SYSTEM_DOMAIN`  | Domain name for Epinio | X |
-| `CACHE_SESSION`  | Enable/Disable cache session | `false` |
+```
+$ yarn start
+```
 
+This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
-`make e2e-tests`
+### Build
 
-That's also possible to run Cypress in GUI mode (mandatory for developing new tests).</br>
-As prerequisites, you need nodejs, yarn and a graphical environment.</br>
-You can find more instructions about dependencies on the official [Cypress documentation](https://docs.cypress.io/guides/getting-started/installing-cypress).</br>
-Once requirements meet, run `make cypress-gui`.
+```
+$ yarn build
+```
+
+This command generates static content into the `build` directory and can be served using any static contents hosting service.
+
+### Deployment
+
+Using SSH:
+
+```
+$ USE_SSH=true yarn deploy
+```
+
+Not using SSH:
+
+```
+$ GIT_USER=<Your GitHub username> yarn deploy
+```
+
+If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
