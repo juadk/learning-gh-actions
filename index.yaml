@@ -1,0 +1,89 @@
+apiVersion: v1
+entries:
+  epinio:
+  - annotations:
+      artifacthub.io/license: Apache-2.0
+    apiVersion: v2
+    appVersion: v1.0.0
+    created: "2022-06-27T13:05:32.65668669Z"
+    dependencies:
+    - condition: minio.enabled, global.minio.enabled
+      name: minio
+      repository: https://charts.min.io/
+      tags:
+      - minio
+      version: 4.0.2
+    - condition: kubed.enabled, global.kubed.enabled
+      name: kubed
+      repository: https://charts.appscode.com/stable/
+      tags:
+      - kubed
+      version: 0.13.2
+    - condition: epinio-ui.enabled
+      name: epinio-ui
+      repository: https://epinio.github.io/helm-charts
+      tags:
+      - epinio-ui
+      version: 0.7.0
+    description: The official way to install Epinio
+    digest: c8d2cd9e36f1215333ebaf231722b1a0cac35866c7ed4dc78edd610b05ced40e
+    home: https://github.com/epinio/epinio
+    icon: https://raw.githubusercontent.com/epinio/helm-charts/main/assets/epinio.png
+    keywords:
+    - epinio
+    - paas
+    maintainers:
+    - email: team@epinio.io
+      name: SUSE
+    name: epinio
+    sources:
+    - https://github.com/epinio/epinio
+    urls:
+    - https://github.com/juadk/learning-gh-actions/releases/download/epinio-1.0.0/epinio-1.0.0.tgz
+    version: 1.0.0
+  epinio-application:
+  - annotations:
+      artifacthub.io/license: Apache-2.0
+    apiVersion: v2
+    created: "2022-06-27T13:05:32.88376038Z"
+    description: The helm chart for epinio applications to be deployed by
+    digest: ceeefe4b3fdb545fc48c2bd5f766039309eee7b3036c19473903af6060c00de1
+    home: https://github.com/epinio/epinio
+    icon: https://raw.githubusercontent.com/epinio/helm-charts/main/assets/epinio.png
+    keywords:
+    - epinio
+    - paas
+    maintainers:
+    - email: team@epinio.io
+      name: SUSE
+    name: epinio-application
+    sources:
+    - https://github.com/epinio/helm-charts
+    type: application
+    urls:
+    - https://github.com/juadk/learning-gh-actions/releases/download/epinio-application-0.1.18/epinio-application-0.1.18.tgz
+    version: 0.1.18
+  epinio-ui:
+  - annotations:
+      artifacthub.io/license: Apache-2.0
+    apiVersion: v2
+    appVersion: v1.0.0-0.0.4
+    created: "2022-06-27T13:05:33.147484352Z"
+    description: A Helm chart for the Epinio UI
+    digest: 7f994818efb1cf0bac20a381336bd16c40c0cad0aeab260aa4713c1a816018cd
+    home: https://github.com/epinio/epinio
+    icon: https://raw.githubusercontent.com/epinio/helm-charts/main/assets/epinio.png
+    keywords:
+    - epinio
+    - paas
+    maintainers:
+    - email: team@epinio.io
+      name: SUSE
+    name: epinio-ui
+    sources:
+    - https://github.com/epinio/ui
+    type: application
+    urls:
+    - https://github.com/juadk/learning-gh-actions/releases/download/epinio-ui-0.7.0/epinio-ui-0.7.0.tgz
+    version: 0.7.0
+generated: "2022-06-27T13:05:33.147490252Z"
