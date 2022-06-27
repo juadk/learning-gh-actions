@@ -1,0 +1,18 @@
+annotations:
+  artifacthub.io/license: Apache-2.0
+apiVersion: v2
+appVersion: v1.0.0-0.0.4
+description: A Helm chart for the Epinio UI
+home: https://github.com/epinio/epinio
+icon: https://raw.githubusercontent.com/epinio/helm-charts/main/assets/epinio.png
+keywords:
+- epinio
+- paas
+maintainers:
+- email: team@epinio.io
+  name: SUSE
+name: epinio-ui
+sources:
+- https://github.com/epinio/ui
+type: application
+version: 0.7.0
