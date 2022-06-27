@@ -1,0 +1,76 @@
+---
+title: "Bump epinio ui version"
+# Define git repository configuration to know where to push changes
+scms:
+  helm-charts:
+    kind: "github"
+    spec:
+      user: "{{ .github.epinio.user }}"
+      email: "{{ .github.epinio.email }}"
+      owner: "{{ .github.epinio.owner }}"
+      repository: "{{ .github.epinio.repository }}"
+      token: '{{ requiredEnv .github.epinio.token }}'
+      username: "{{ .github.epinio.username }}"
+      branch: "{{ .github.epinio.branch }}"
+
+  ui-backend:
+    kind: "git"
+    spec:
+      url: "https://github.com/epinio/ui-backend.git"
+      branch: "main"
+
+# Defines where we get source values
+sources:
+  ui-backend-tag:
+    name: "Get latest Epinio UI backend git tag"
+    kind: "gittag"
+    scmid: ui-backend
+
+  epinio:
+    name: "Get Latest epinio version"
+    kind: "githubrelease"
+    spec:
+      owner: "epinio"
+      repository: "epinio"
+      username: '{{ requiredEnv .github.epinio.username }}'
+      token: '{{ requiredEnv .github.epinio.token }}'
+
+
+conditions:
+  dockerImage:
+    name: 'Check that ghcr.io/epinio/epinio-ui:{{ source "ui-backend-tag" }} exists'
+    kind: "dockerimage"
+    sourceid: "ui-backend-tag"
+    spec:
+      image: "ghcr.io/epinio/epinio-ui"
+      architecture: "amd64"
+
+targets:
+  epinio-ui-chart:
+    name: "Update Epinio UI backend image for Helm Chart chart/epinio-ui"
+    kind: "helmchart"
+    scmid: "helm-charts"
+    sourceid: "ui-backend-tag"
+    transformers:
+      - addprefix: "ghcr.io/epinio/epinio-ui:"
+    spec:
+      name: "chart/epinio-ui"
+      file: "values.yaml"
+      key: "epinioUI.image.tag"
+      value: '{{ source "ui-backend-tag" }}'
+      versionincrement: minor
+      appversion: true
+
+# Define pullrequest configuration if one needs to be created
+pullrequests:
+  helm-charts:
+    kind: "github"
+    scmid: "helm-charts"
+    targets:
+      - "epinio-ui-chart"
+    spec:
+      automerge: true
+      labels:
+        - "dependencies"
+        - "epinio-ui"
+

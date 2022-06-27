@@ -1,0 +1,92 @@
+---
+title: "Bump epinio server version"
+# Define git repository configuration to know where to push changes
+scms:
+  helm-charts:
+    kind: "github"
+    spec:
+      user: "{{ .github.epinio.user }}"
+      email: "{{ .github.epinio.email }}"
+      owner: "{{ .github.epinio.owner }}"
+      repository: "{{ .github.epinio.repository }}"
+      token: '{{ requiredEnv .github.epinio.token }}'
+      username: "{{ .github.epinio.username }}"
+      branch: "{{ .github.epinio.branch }}"
+
+# Define pullrequest configuration if one needs to be created
+pullrequests:
+  helm-charts:
+    kind: "github"
+    scmid: "helm-charts"
+    targets:
+      - "helm-charts"
+      - "epinioui"
+    spec:
+      labels:
+        - "dependencies"
+        - "epinio"
+
+# Defines where we get source values
+sources:
+  epinio:
+    name: "Get Latest epinio version"
+    kind: "githubrelease"
+    spec:
+      owner: "epinio"
+      repository: "epinio"
+      username: '{{ requiredEnv .github.epinio.username }}'
+      token: '{{ requiredEnv .github.epinio.token }}'
+
+# Defines condition that must pass in order to update targets
+conditions:
+  dockerImage:
+    name: 'Check that ghcr.io/epinio/epinio-server:{{ source "epinio" }} is published'
+    kind: "dockerimage"
+    sourceid: "epinio"
+    spec:
+      image: "ghcr.io/epinio/epinio-server"
+      architecture: "amd64"
+
+  dockerImageRepository:
+    name: "Check that container image repository 'epinio/epinio-server' is used in Helm chart epinio"
+    kind: "yaml"
+    disablesourceinput: true
+    scmid: "helm-charts"
+    spec:
+      file: "chart/epinio/values.yaml"
+      key: "image.epinio.repository"
+      value: "epinio/epinio-server"
+
+  dockerImageRegistry:
+    name: "Check that 'ghcr.io' registry is used in Helm chart epinio"
+    kind: "yaml"
+    disablesourceinput: true
+    scmid: "helm-charts"
+    spec:
+      file: "chart/epinio/values.yaml"
+      key: "image.epinio.registry"
+      value: "ghcr.io/"
+
+# Defines what needs to be udpated if needed
+targets:
+  helm-charts:
+    name: "Update epinio version in chart epinio"
+    kind: "helmchart"
+    scmid: "helm-charts"
+    sourceid: "epinio"
+    spec:
+      name: "chart/epinio"
+      file: "Chart.yaml"
+      key: "appVersion"
+      versionincrement: "minor"
+
+  epinioui:
+    name: "Update epinio version in chart epinio"
+    kind: "helmchart"
+    scmid: "helm-charts"
+    sourceid: "epinio"
+    spec:
+      name: "chart/epinio"
+      file: "values.yaml"
+      key: "epinio-ui.epinioVersion"
+      versionincrement: "minor"

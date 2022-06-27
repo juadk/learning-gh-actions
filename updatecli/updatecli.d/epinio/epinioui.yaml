@@ -1,0 +1,60 @@
+---
+title: "Bump the Epinio chart depedency 'epinio-ui'"
+# Define git repository configuration to know where to push changes
+scms:
+  default:
+    kind: "github"
+    spec:
+      user: "{{ .github.epinio.user }}"
+      email: "{{ .github.epinio.email }}"
+      owner: "{{ .github.epinio.owner }}"
+      repository: "{{ .github.epinio.repository }}"
+      token: '{{ requiredEnv .github.epinio.token }}'
+      username: "{{ .github.epinio.username }}"
+      branch: "{{ .github.epinio.branch }}"
+
+# Define pullrequest configuration if one needs to be created
+pullrequests:
+  helm-charts:
+    kind: "github"
+    scmid: "default"
+    targets:
+      - "chart"
+    spec:
+      labels:
+        - "dependencies"
+        - "epinio"
+
+# Defines where we get source values
+sources:
+  epinioui:
+    name: "Get Latest epinio-ui helm chart version"
+    kind: "helmchart"
+    spec:
+      url:  https://epinio.github.io/helm-charts
+      name: epinio-ui
+
+conditions:
+  epinio:
+    kind: yaml
+    name: "Test Epinio Helm Chart dependency containing epinio-ui"
+    disablesourceinput: true
+    scmid: default
+    spec:
+      file: "chart/epinio/Chart.yaml"
+      key: "dependencies[2].name"
+      value: epinio-ui
+
+# Defines what needs to be udpated if needed
+targets:
+  chart:
+    name: "Update Epinio Helm Chart dependency to the latest epinio-ui chart version"
+    kind: "helmchart"
+    scmid: "default"
+    sourceid: "epinioui"
+    spec:
+      name: "chart/epinio"
+      file: "Chart.yaml"
+      key: "dependencies[2].version"
+      versionincrement: minor
+

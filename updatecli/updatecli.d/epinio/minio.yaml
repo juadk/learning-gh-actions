@@ -1,0 +1,60 @@
+---
+title: "Bump the Epinio chart dependency 'minio'"
+# Define git repository configuration to know where to push changes
+scms:
+  default:
+    kind: "github"
+    spec:
+      user: "{{ .github.epinio.user }}"
+      email: "{{ .github.epinio.email }}"
+      owner: "{{ .github.epinio.owner }}"
+      repository: "{{ .github.epinio.repository }}"
+      token: '{{ requiredEnv .github.epinio.token }}'
+      username: "{{ .github.epinio.username }}"
+      branch: "{{ .github.epinio.branch }}"
+
+# Define pullrequest configuration if one needs to be created
+pullrequests:
+  helm-charts:
+    kind: "github"
+    scmid: "default"
+    targets:
+      - "chart"
+    spec:
+      labels:
+        - "dependencies"
+        - "epinio"
+
+# Defines where we get source values
+sources:
+  minio:
+    name: "Get Latest minio Helm Chart version"
+    kind: "helmchart"
+    spec:
+      url:  https://charts.min.io/
+      name: minio
+
+conditions:
+  epinio:
+    kind: yaml
+    name: "Ensure minio is defined in Epinio chart dependency"
+    disablesourceinput: true
+    scmid: default
+    spec:
+      file: "chart/epinio/Chart.yaml"
+      key: "dependencies[0].name"
+      value: minio
+
+# Defines what needs to be udpated if needed
+targets:
+  chart:
+    name: "Update Epinio chart dependency to latest minio version"
+    kind: "helmchart"
+    scmid: "default"
+    sourceid: "minio"
+    spec:
+      name: "chart/epinio"
+      file: "Chart.yaml"
+      key: "dependencies[0].version"
+      versionincrement: minor
+

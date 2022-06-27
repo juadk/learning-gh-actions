@@ -1,0 +1,127 @@
+## Default values for Epinio Helm Chart.
+## This is a YAML-formatted file.
+## Declare variables to be passed into your templates.
+
+# The email address you are planning to use for getting notifications about your certificates.
+email: "epinio@suse.com"
+image:
+  epinio:
+    registry: docker.io/
+    repository: epinioteam/epinio-server-qa
+    tag: "latest"
+  bash:
+    repository: library/bash
+    tag: 5.1.4
+  awscli:
+    repository: amazon/aws-cli
+    tag: 2.0.52
+  kubectl:
+    repository: rancher/kubectl
+    tag: v1.22.6
+  builder:
+    repository: paketobuildpacks/builder
+    tag: full
+server:
+  # Domain which serves the Rancher UI (to access the API)
+  accessControlAllowOrigin: ""
+  # increase this value to increase all timeouts by the same factor
+  timeoutMultiplier: 1
+  # Change this to a random string. Used for session cookies by the API server.
+  sessionKey: "12345"
+  # Increase this value to instruct the API server to produce more debug output
+  traceLevel: 0
+  # The ingressClassName is used to select the ingress controller for apps. If empty no class will be added to their ingresseses.
+  ingressClassName: ""
+ingress:
+  # The ingressClassName is used to select the ingress controller for the server. If empty no class will be added to the ingresses.
+  ingressClassName: ""
+  # Annotations to add to the API ingress
+  # e.g.: --set 'ingress.annotations.nginx\.ingress\.kubernetes\.io/ssl-redirect=false'
+  annotations: {}
+  # nginxSSLRedirect to controll https->http redirects
+  nginxSSLRedirect: "true"
+certManagerNamespace: cert-manager
+# Connection details for the S3 storage
+s3:
+  endpoint: s3.amazonaws.com
+  bucket: ""
+  region: ""
+  accessKeyID: ""
+  secretAccessKey: ""
+  useSSL: true
+  # Set it to an existing secret if S3 is using a self signed cert
+  certificateSecret: ""
+api:
+  # Default users
+  users:
+    - username: admin
+      passwordBcrypt: "$2a$10$6bCi5NMstMK781In7JGiL.B44pgoplUb330FQvm6mVXMppbXBPiXS"
+      role: admin
+    - username: epinio
+      passwordBcrypt: "$2a$10$6bCi5NMstMK781In7JGiL.B44pgoplUb330FQvm6mVXMppbXBPiXS"
+      role: user
+      workspaces:
+        - workspace
+# Minio subchart values
+minio:
+  enabled: true
+  # hardcode this, to avoid problems with release name
+  fullnameOverride: minio
+  existingSecret: minio-creds
+  tls:
+    enabled: true
+    certSecret: minio-tls
+    publicCrt: tls.crt
+    privateKey: tls.key
+  persistence:
+    size: 2Gi
+  drivesPerNode: 4
+  replicas: 1
+  resources:
+    requests:
+      memory: 1Gi
+  makeUserJob:
+    podAnnotations:
+      linkerd.io/inject: disabled
+epinio-ui:
+  enabled: true
+  epinioTheme: light
+  epinioVersion: "v1.0.0"
+  ingress:
+    enabled: false
+kubed:
+  enabled: true
+  fullnameOverride: kubed
+  enableAnalytics: false
+containerregistry:
+  enabled: true
+  image:
+    registry:
+      repository: registry
+      tag: 2.7.1
+    nginx:
+      repository: nginx
+      tag: 1.21.6
+  imagePullPolicy: IfNotPresent
+  # The ingressClassName is used to select the ingress controller. If
+  # empty no class will be added to the ingresses.
+  ingressClassName: ""
+serviceCatalog:
+  # Enable service catalog service for development
+  enableDevServices: true
+global:
+  # The domain that will be used to access the epinio API server and the registry
+  domain: ""
+  # Connection details for the container registry.
+  registryURL: ""  # Skip if containerregistry.enabled is true
+  registryUsername: "admin"
+  registryPassword: "changeme"
+  registryNamespace: "apps"  # Used in registry path when pushing -> "external.tld/apps/APPNAME"
+  # The name of the cluster issuer to use.
+  # Epinio creates three options: 'epinio-ca', 'letsencrypt-production', and 'selfsigned-issuer'.
+  tlsIssuer: "epinio-ca"
+  # The URL of the container registry from where to pull container images for the various
+  # created Pods. Don't confuse this registry with the "Epinio registry" which is the one
+  # where Epinio stores the application images.
+  cattle:
+    systemDefaultRegistry: ""

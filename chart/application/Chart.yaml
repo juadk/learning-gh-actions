@@ -1,0 +1,17 @@
+apiVersion: v2
+name: epinio-application
+description: The helm chart for epinio applications to be deployed by
+icon: https://raw.githubusercontent.com/epinio/helm-charts/main/assets/epinio.png
+home: https://github.com/epinio/epinio
+type: application
+version: 0.1.18
+keywords:
+- epinio
+- paas
+maintainers:
+- email: team@epinio.io
+  name: SUSE
+sources:
+- https://github.com/epinio/helm-charts
+annotations:
+  artifacthub.io/license: Apache-2.0
