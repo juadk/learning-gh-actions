@@ -1,0 +1,65 @@
+---
+title: "Bump the Epinio chart dependency 'kubed'"
+# Define git repository configuration to know where to push changes
+scms:
+  default:
+    kind: "github"
+    spec:
+      user: "{{ .github.epinio.user }}"
+      email: "{{ .github.epinio.email }}"
+      owner: "{{ .github.epinio.owner }}"
+      repository: "{{ .github.epinio.repository }}"
+      token: '{{ requiredEnv .github.epinio.token }}'
+      username: "{{ .github.epinio.username }}"
+      branch: "{{ .github.epinio.branch }}"
+
+# Define pullrequest configuration if one needs to be created
+pullrequests:
+  helm-charts:
+    kind: "github"
+    scmid: "default"
+    targets:
+      - "chart"
+    spec:
+      labels:
+        - "dependencies"
+        - "epinio"
+
+# Defines where we get source values
+sources:
+  kubed:
+    name: "Get Latest Kubed Helm Chart version"
+    kind: "helmchart"
+    spec:
+      # Doesn't work :/
+      #url: "https://charts.appscode.com/stable/"
+      url: "https://charts.appscode.com/stable"
+      name: "kubed"
+    # Ensure that the version doesn't start with v
+    transformers:
+      - trimprefix: v
+
+conditions:
+  epinio:
+    kind: yaml
+    name: "Ensure Kubed is defined in Epinio chart dependency"
+    disablesourceinput: true
+    scmid: default
+    spec:
+      file: "chart/epinio/Chart.yaml"
+      key: "dependencies[1].name"
+      value: kubed
+
+# Defines what needs to be udpated if needed
+targets:
+  chart:
+    name: "Update Epinio Helm chart dependency to latest Kubed version"
+    kind: "helmchart"
+    scmid: "default"
+    sourceid: "kubed"
+    spec:
+      name: "chart/epinio"
+      file: "Chart.yaml"
+      key: "dependencies[1].version"
+      versionincrement: minor
+

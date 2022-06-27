@@ -1,0 +1,13 @@
+# See https://github.com/helm/chart-testing#configuration
+remote: origin
+target-branch: main
+check-version-increment: false
+chart-dirs:
+  - chart
+chart-repos:
+  - minio=https://charts.min.io
+  - appscode=https://charts.appscode.com/stable
+  - epinio=https://epinio.github.io/helm-charts
+charts: chart/epinio
+helm-extra-args: --timeout 600s
+upgrade: true

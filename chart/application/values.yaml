@@ -1,0 +1,64 @@
+# Default values for epinio-application.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# This is the API between the epinio server's deployment code, and
+# charts implementing the deployment, like this one.
+
+# appName            :: string                 :: application name
+# replicaCount       :: integer                :: number of instances (pods) to deploy
+# stageID            :: string                 :: id of stage run generating the app image
+# imageURL           :: string                 :: reference to app image in registry
+# username           :: string                 :: user triggering deployment
+# routes             :: sequence (route)       :: routes (= domain+path+id) the app has to be reachable at
+# env                :: sequence (assignment)  :: app environment variables and values
+# configurations     :: sequence (string)      :: names of the configurations to import into the app
+# start              :: integer                :: time of deployment, nanoseconds
+# ingress            :: string                 :: ingress class name to use, if any
+# tlsIssuer          :: string                 :: name of cert issuer
+##
+#  assignment :: map ('name' -> string, 'value' -> string)
+
+# The `start` element can be used to force a restart of specific resources with each
+# re-deployment. This standard chart uses it in a pod template annotation, forcing pod
+# restart.
+#
+# This is required because an app may have to ingest changes to resources outside of
+# itself.  I.e. an update to a bound configuration
+
+image:
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+epinio:
+  tlsIssuer: ~
+  ingress: ~
+  appName: placeholder
+  # namespace: .Release.Namespace
+  replicaCount: 1
+  stageID: 999
+  imageURL: ~
+  username: user
+  routes: ~
+  env: ~
+  configurations: ~
+  start: ~
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
